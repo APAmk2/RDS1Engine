@@ -1,0 +1,7 @@
+﻿# Trash
+out/
+CMakePresets.json
+.vs/
+
+# Compiled data
+BIN/

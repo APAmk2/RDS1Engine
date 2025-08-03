@@ -17,7 +17,8 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif()
 
 project ("RDS1Engine")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/3RDPARTY/GLEW/include" SDL3)
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/3RDPARTY/GLEW/include" "${CMAKE_CURRENT_SOURCE_DIR}/3RDPARTY/GLM" "${CMAKE_CURRENT_SOURCE_DIR}/3RDPARTY/LODEPNG" SDL3)
 set(SDL3_DIR "3RDPARTY/SDL3/CMake")
 find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 find_package(OpenGL)
@@ -28,7 +29,8 @@ set (1STPARTY_SRC
 	"SRC/Main.cpp")
 
 set (3RDPARTY_SRC
-	)
+	"3RDPARTY/LODEPNG/lodepng.cpp"	
+)
 
 add_executable (RDS1Engine ${1STPARTY_SRC} ${3RDPARTY_SRC})
 if(64BIT)

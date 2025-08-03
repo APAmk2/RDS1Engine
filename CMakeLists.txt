@@ -25,6 +25,9 @@ find_package(OpenGL)
 
 set (1STPARTY_SRC
 	"SRC/Common.cpp"
+	"SRC/RNDRCOMN/Texture.cpp"
+	"SRC/OGL/ShaderOGL.cpp"
+	"SRC/OGL/RenderOGL.cpp"
 	"SRC/Engine.cpp"
 	"SRC/Main.cpp")
 

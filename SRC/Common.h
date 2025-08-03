@@ -30,4 +30,12 @@ constexpr char ENGINE_NAME[] = "RDS1 Engine";
 struct EngineOptions
 {
 	bool CallQuit = false;
+	u32 ScreenWidth = 1024;
+	u32 ScreenHeight = 768;
+
+	float CamX = 1.0f;
+	float CamY = 1.0f;
+	float CamZ = 1.0f;
+
+	bool RenderDemo = true; // Should we render dummy shit RN - APAMk2
 } extern EngineOpts;

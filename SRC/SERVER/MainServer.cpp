@@ -1,16 +1,16 @@
 ﻿#include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <Common.h>
 
-#include "Common.h"
-#include "Engine.h"
+#include "Server.h"
 
-RDS1Engine* Engine;
+RDS1Server* Server;
 
 int main(int argc, char* args[])
 {
-	Engine = new RDS1Engine;
+	Server = new RDS1Server;
 
-	if (!Engine || !Engine->Init())
+	if (!Server || !Server->Init())
 	{
 		SDL_Log("Failed to initialize!\n");
 	}
@@ -18,11 +18,11 @@ int main(int argc, char* args[])
 	{
 		while (!EngineOpts.CallQuit)
 		{
-			Engine->MainLoop();
+			Server->MainLoop();
 		}
 	}
 
-	delete Engine;
+	delete Server;
 
 	return 0;
 }

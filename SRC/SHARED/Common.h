@@ -25,6 +25,11 @@ struct ColorRGBA
 	u8 a = 0;
 };
 
+struct Vertex
+{
+	float points[3];
+};
+
 constexpr char ENGINE_NAME[] = "RDS1 Engine";
 
 struct EngineOptions

@@ -11,13 +11,14 @@
 #include <fstream>
 #include <sstream>
 
-#include "../Common.h"
+#include <Common.h>
 #include "RenderOGL.h"
 #include "ShaderOGL.h"
 
 //Graphics program
 GLuint gProgramID = 0;
-GLuint vertexbuffer = 0;
+GLuint cubeVertexBuff = 0;
+GLuint triVertexBuff = 0;
 GLuint colorbuffer = 0;
 
 GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
@@ -123,12 +124,13 @@ bool RenderOGL::Init()
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer
-	glGenBuffers(1, &vertexbuffer);
-	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	// Give our vertices to OpenGL.
+	glGenBuffers(1, &cubeVertexBuff);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBuff);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_cube_vertices), g_cube_vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &triVertexBuff);
+	glBindBuffer(GL_ARRAY_BUFFER, triVertexBuff);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_triangle_vertices), g_triangle_vertices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &colorbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
@@ -142,7 +144,7 @@ bool RenderOGL::Init()
 	return true;
 }
 
-void DrawFigure(glm::vec3 pos)
+void DrawFigure(glm::vec3 pos, GLuint vertexBuff, GLsizei count)
 {
 	glm::mat4 Projection = glm::perspective(glm::radians(90.0f), (float)EngineOpts.ScreenWidth / (float)EngineOpts.ScreenHeight, 0.1f, 100.0f);
 
@@ -166,7 +168,7 @@ void DrawFigure(glm::vec3 pos)
 
 	// 1st attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuff);
 	glVertexAttribPointer(
 		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
@@ -188,7 +190,7 @@ void DrawFigure(glm::vec3 pos)
 		(void*)0                          // array buffer offset
 	);
 
-	glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
+	glDrawArrays(GL_TRIANGLES, 0, count);
 }
 
 void render()
@@ -198,8 +200,8 @@ void render()
 
 	glUseProgram(gProgramID);
 
-	DrawFigure(glm::vec3(0, 0, 0));
-	DrawFigure(glm::vec3(3, 3, 2));
+	DrawFigure(glm::vec3(0, 0, 0), cubeVertexBuff, 12 * 3);
+	DrawFigure(glm::vec3(3, 3, 2), triVertexBuff, 3 * 3);
 
 	glDisableVertexAttribArray(0);
 }

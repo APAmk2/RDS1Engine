@@ -1,10 +1,10 @@
 #pragma once
 
-class RDS1Engine
+class RDS1Client
 {
 public:
-	RDS1Engine();
-	~RDS1Engine();
+	RDS1Client();
+	~RDS1Client();
 
 	bool Init(); // Since we can't return anything from constructor - APAMk2
 

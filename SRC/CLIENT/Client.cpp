@@ -5,8 +5,9 @@
 #include <GL/glu.h>
 #include <string>
 
-#include "Common.h"
-#include "Engine.h"
+#include <Common.h>
+
+#include "Client.h"
 #include "OGL/RenderOGL.h"
 
 constexpr int OPENGL_MAJOR = 3;
@@ -70,11 +71,11 @@ void DestroySDL()
 	SDL_StopTextInput(gWindow);
 }
 
-RDS1Engine::RDS1Engine()
+RDS1Client::RDS1Client()
 {
 
 }
-RDS1Engine::~RDS1Engine()
+RDS1Client::~RDS1Client()
 {
 	delete Render;
 	Render = NULL;
@@ -88,7 +89,7 @@ RDS1Engine::~RDS1Engine()
 	SDL_Quit();
 }
 
-bool RDS1Engine::Init()
+bool RDS1Client::Init()
 {
 	if(!InitSDL()) return false;
 	Render = new RenderOGL;
@@ -97,7 +98,7 @@ bool RDS1Engine::Init()
 	return true;
 }
 
-bool RDS1Engine::MainLoop()
+bool RDS1Client::MainLoop()
 {
 	static SDL_Event CurrentSDLEvent;
 	while (SDL_PollEvent(&CurrentSDLEvent) != 0)
@@ -110,7 +111,7 @@ bool RDS1Engine::MainLoop()
 	return true;
 }
 
-void RDS1Engine::HandleInput(SDL_Event* event)
+void RDS1Client::HandleInput(SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_QUIT)
 	{
@@ -165,7 +166,7 @@ void RDS1Engine::HandleInput(SDL_Event* event)
 	}
 }
 
-bool RDS1Engine::ProcessRender()
+bool RDS1Client::ProcessRender()
 {
 	Render->Process();
 

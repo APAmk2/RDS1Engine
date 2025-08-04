@@ -4,7 +4,7 @@
 #include <GL/glu.h>
 #include <vector>
 
-#include "../Common.h"
+#include <Common.h>
 #include "ShaderOGL.h"
 
 ShaderOGL::ShaderOGL(std::string sources, GLuint type)

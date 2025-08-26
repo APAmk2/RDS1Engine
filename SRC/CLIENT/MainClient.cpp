@@ -1,6 +1,7 @@
 ﻿#include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <Common.h>
+#include <format>
 
 #include "Client.h"
 
@@ -8,11 +9,14 @@ RDS1Client* Client;
 
 int main(int argc, char* args[])
 {
+	LogMngr = new Logger("RDS1MAIN.LOG");
 	Client = new RDS1Client;
+
+	LogMngr->WriteLog(std::format("Starting RDS1 Engine, Client. Build No.{}", GetBuildNum(gBuildDate)));
 
 	if (!Client || !Client->Init())
 	{
-		SDL_Log("Failed to initialize!\n");
+		LogMngr->WriteLog("Failed initialize engine!", LOG_CRIT_ERROR);
 	}
 	else
 	{
@@ -23,6 +27,7 @@ int main(int argc, char* args[])
 	}
 
 	delete Client;
+	delete LogMngr;
 
 	return 0;
 }

@@ -4,6 +4,7 @@
 #include <SDL3/SDL_opengl.h>
 #include <GL/glu.h>
 #include <string>
+#include <format>
 
 #include <Common.h>
 
@@ -23,9 +24,11 @@ bool InitSDL()
 	//Initialize SDL
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
-		SDL_Log("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Failed to initialize SDL! Error: {}", SDL_GetError()), LOG_CRIT_ERROR, "SDL");
 		return false;
 	}
+
+	LogMngr->WriteLog(std::format("Version: {}.{}, Profile: {}", OPENGL_MAJOR, OPENGL_MINOR, OPENGL_PROFILE), LOG_INFO, "OGL");
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, OPENGL_MAJOR);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, OPENGL_MINOR);
@@ -35,7 +38,7 @@ bool InitSDL()
 	gWindow = SDL_CreateWindow(ENGINE_NAME, EngineOpts.ScreenWidth, EngineOpts.ScreenHeight, SDL_WINDOW_OPENGL);
 	if (gWindow == NULL)
 	{
-		SDL_Log("Window could not be created! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Failed to create SDL window! Error: {}", SDL_GetError()), LOG_CRIT_ERROR, "SDL");
 		return false;
 	}
 
@@ -43,7 +46,7 @@ bool InitSDL()
 	gContext = SDL_GL_CreateContext(gWindow);
 	if (gContext == NULL)
 	{
-		SDL_Log("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Failed to create OpenGL context! Error: {}", SDL_GetError()), LOG_CRIT_ERROR, "OGL");
 		return false;
 	}
 
@@ -53,12 +56,13 @@ bool InitSDL()
 	if (glewError != GLEW_OK)
 	{
 		SDL_Log("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
+//		LogMngr->WriteLog(std::format("Failed to initialize GLEW! Error: {}", glewGetErrorString(glewError)), LOG_CRIT_ERROR, "OGL");
 	}
 
 	//Use Vsync
 	if (!SDL_GL_SetSwapInterval(1))
 	{
-		SDL_Log("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Unable to set VSync! Error {}", SDL_GetError()), LOG_WARNING, "SDL");
 	}
 
 	SDL_StartTextInput(gWindow);
@@ -73,24 +77,31 @@ void DestroySDL()
 
 RDS1Client::RDS1Client()
 {
-
+	LogMngr->WriteLog("Created client instance.");
 }
 RDS1Client::~RDS1Client()
 {
+	LogMngr->WriteLog("Destroying client.");
+
+	LogMngr->WriteLog("Destroying renderer.", LOG_INFO, "Renderer");
 	delete Render;
 	Render = NULL;
 	DestroySDL();
 
+	LogMngr->WriteLog("Destroying SDL window.", LOG_INFO, "SDL");
 	//Destroy window	
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 
+	LogMngr->WriteLog("Destroying SDL.", LOG_INFO, "SDL");
 	//Quit SDL subsystems
 	SDL_Quit();
 }
 
 bool RDS1Client::Init()
 {
+	LogMngr->WriteLog("Initializing client instance.");
+
 	if(!InitSDL()) return false;
 	Render = new RenderOGL;
 	if(!Render || !Render->Init()) return false;

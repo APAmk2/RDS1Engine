@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <format>
 
 #include <Common.h>
 #include "RenderOGL.h"
@@ -109,17 +110,21 @@ static const GLfloat g_color_buffer_data[] = {
 
 RenderOGL::RenderOGL()
 {
-
+	LogMngr->WriteLog("Created OGL Renderer instance.", LOG_INFO, "OGL");
 }
 
 RenderOGL::~RenderOGL()
 {
+	LogMngr->WriteLog("Destroying OGL Renderer instance.", LOG_INFO, "OGL");
+
 	//Deallocate program
 	glDeleteProgram(gProgramID);
 }
 
 bool RenderOGL::Init()
 {
+	LogMngr->WriteLog("Initializing OGL Renderer instance.", LOG_INFO, "OGL");
+
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -218,26 +223,33 @@ GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path)
 	// Read the Vertex Shader code from the file
 	std::string VertexShaderCode;
 	std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
-	if (VertexShaderStream.is_open()) {
+	if (VertexShaderStream.is_open()) 
+	{
 		std::stringstream sstr;
 		sstr << VertexShaderStream.rdbuf();
 		VertexShaderCode = sstr.str();
 		VertexShaderStream.close();
 	}
-	else {
-		printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
-		getchar();
+	else 
+	{
+		LogMngr->WriteLog(std::format("Cant open vertex shader file {}.", vertex_file_path), LOG_ERROR, "OGL");
 		return 0;
 	}
 
 	// Read the Fragment Shader code from the file
 	std::string FragmentShaderCode;
 	std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
-	if (FragmentShaderStream.is_open()) {
+	if (FragmentShaderStream.is_open()) 
+	{
 		std::stringstream sstr;
 		sstr << FragmentShaderStream.rdbuf();
 		FragmentShaderCode = sstr.str();
 		FragmentShaderStream.close();
+	}
+	else
+	{
+		LogMngr->WriteLog(std::format("Cant open fragment shader file {}.", fragment_file_path), LOG_ERROR, "OGL");
+		return 0;
 	}
 
 	ShaderOGL* VertexShader = new ShaderOGL(VertexShaderCode, GL_VERTEX_SHADER);

@@ -1,4 +1,4 @@
-﻿# CMakeLists.txt for RDS1Engine
+﻿# CMakeLists.txt for RDS1 Engine, Primary project
 # Written by APAMk2, 2025 (C)
 #
 
@@ -23,7 +23,9 @@ include_directories(SDL3 "${PROJECT_SOURCE_DIR}/SRC/SHARED")
 find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 
 set(SHARED_SRC
-	"${PROJECT_SOURCE_DIR}/SRC//SHARED/Common.cpp"
+	"${PROJECT_SOURCE_DIR}/SRC/SHARED/Common.cpp"
+	"${PROJECT_SOURCE_DIR}/SRC/SHARED/Buffer.cpp"
+	"${PROJECT_SOURCE_DIR}/SRC/SHARED/Logging.cpp"
 )
 
 file(GLOB IMGUI_SRC

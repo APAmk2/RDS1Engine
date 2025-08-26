@@ -4,6 +4,7 @@
 #include <SDL3/SDL_opengl.h>
 #include <GL/glu.h>
 #include <string>
+#include <format>
 
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -28,9 +29,11 @@ bool InitSDL()
 	//Initialize SDL
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
-		SDL_Log("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Failed to initialize SDL! Error: {}", SDL_GetError()), LOG_CRIT_ERROR, "SDL");
 		return false;
 	}
+
+	LogMngr->WriteLog(std::format("Version: {}.{}, Profile: {}", OPENGL_MAJOR, OPENGL_MINOR, OPENGL_PROFILE), LOG_INFO, "OGL");
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, OPENGL_MAJOR);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, OPENGL_MINOR);
@@ -40,7 +43,7 @@ bool InitSDL()
 	gWindow = SDL_CreateWindow(ENGINE_NAME, EngineOpts.ScreenWidth, EngineOpts.ScreenHeight, SDL_WINDOW_OPENGL);
 	if (gWindow == NULL)
 	{
-		SDL_Log("Window could not be created! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Failed to create SDL window! Error: {}", SDL_GetError()), LOG_CRIT_ERROR, "SDL");
 		return false;
 	}
 
@@ -48,7 +51,7 @@ bool InitSDL()
 	gContext = SDL_GL_CreateContext(gWindow);
 	if (gContext == NULL)
 	{
-		SDL_Log("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Failed to create OpenGL context! Error: {}", SDL_GetError()), LOG_CRIT_ERROR, "OGL");
 		return false;
 	}
 
@@ -63,7 +66,7 @@ bool InitSDL()
 	//Use Vsync
 	if (!SDL_GL_SetSwapInterval(1))
 	{
-		SDL_Log("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+		LogMngr->WriteLog(std::format("Unable to set VSync! Error {}", SDL_GetError()), LOG_WARNING, "SDL");
 	}
 
 	SDL_StartTextInput(gWindow);
@@ -78,6 +81,8 @@ void DestroySDL()
 
 bool InitImGui()
 {
+	LogMngr->WriteLog(std::format("Initializing ImGUI. Version: {}.", IMGUI_VERSION), LOG_INFO, "ImGUI");
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -91,6 +96,7 @@ bool InitImGui()
 
 void DestroyImGui()
 {
+	LogMngr->WriteLog("Destroying ImGUI.", LOG_INFO, "ImGUI");
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
@@ -98,23 +104,29 @@ void DestroyImGui()
 
 RDS1Server::RDS1Server()
 {
-
+	LogMngr->WriteLog("Created server instance.");
 }
 RDS1Server::~RDS1Server()
 {
+	LogMngr->WriteLog("Destroying server.");
+
 	DestroyImGui();
 	DestroySDL();
 
+	LogMngr->WriteLog("Destroying SDL window.", LOG_INFO, "SDL");
 	//Destroy window	
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 
+	LogMngr->WriteLog("Destroying SDL.", LOG_INFO, "SDL");
 	//Quit SDL subsystems
 	SDL_Quit();
 }
 
 bool RDS1Server::Init()
 {
+	LogMngr->WriteLog("Initializing server instance.");
+
 	if(!InitSDL()) return false;
 	if(!InitImGui()) return false;
 	//Render = new RenderOGL;

@@ -1,10 +1,13 @@
-# CMakeLists.txt for RDS1Engine
+# CMakeLists.txt for RDS1 Engine, Server-Side
 # Written by APAMk2, 2025 (C)
 #
 
 cmake_minimum_required (VERSION 3.12)
 
-include_directories("${PROJECT_SOURCE_DIR}/3RDPARTY/GLEW/include" "${PROJECT_SOURCE_DIR}/3RDPARTY/GLM" "${PROJECT_SOURCE_DIR}/3RDPARTY/IMGUI")
+include_directories("${PROJECT_SOURCE_DIR}/3RDPARTY/GLEW/include" 
+					"${PROJECT_SOURCE_DIR}/3RDPARTY/GLM" 
+					"${PROJECT_SOURCE_DIR}/3RDPARTY/IMGUI" 
+					"${PROJECT_SOURCE_DIR}/3RDPARTY/ASIO")
 find_package(OpenGL)
 
 set (1STPARTY_SRC
@@ -28,6 +31,10 @@ else()
 											SDL3::SDL3
 											OpenGL::GL
 											OpenGL::GLU)
+endif()
+
+if(WIN32)
+	target_link_libraries(SERVER wsock32 ws2_32)
 endif()
 
 set_property(TARGET SERVER PROPERTY CXX_STANDARD 20)

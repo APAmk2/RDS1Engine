@@ -6,12 +6,14 @@ cmake_minimum_required (VERSION 3.12)
 
 include_directories("${PROJECT_SOURCE_DIR}/3RDPARTY/GLEW/include" 
 					"${PROJECT_SOURCE_DIR}/3RDPARTY/GLM" 
-					"${PROJECT_SOURCE_DIR}/3RDPARTY/LODEPNG")
+					"${PROJECT_SOURCE_DIR}/3RDPARTY/LODEPNG"
+					"${PROJECT_SOURCE_DIR}/3RDPARTY/TOML")
 find_package(OpenGL)
 
 set (1STPARTY_SRC
 	"RNDRCOMN/Texture.cpp"
 	"RNDRCOMN/Model.cpp"
+	"RNDRCOMN/Viewport.cpp"
 	"OGL/ShaderOGL.cpp"
 	"OGL/RenderOGL.cpp"
 #	"NET/NetClient.cpp"

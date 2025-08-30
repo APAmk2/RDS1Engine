@@ -15,6 +15,7 @@
 #include <Common.h>
 #include "RenderOGL.h"
 #include "ShaderOGL.h"
+#include "../RNDRCOMN/Viewport.h"
 
 //Graphics program
 GLuint gProgramID = 0;
@@ -144,6 +145,11 @@ bool RenderOGL::Init()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	gViewport.SetCoords(Rect(0, 0, EngineOpts.ScreenWidth, EngineOpts.ScreenHeight));
+	gViewport.SetFOV(90.0f);
+	gViewport.SetNear(0.1f);
+	gViewport.SetFar(100.0f);
+
 	gProgramID = LoadShaders("VERTSHDR.VSH", "FRAGSHDR.FSH");
 
 	return true;
@@ -151,13 +157,11 @@ bool RenderOGL::Init()
 
 void DrawFigure(glm::vec3 pos, GLuint vertexBuff, GLsizei count)
 {
-	glm::mat4 Projection = glm::perspective(glm::radians(90.0f), (float)EngineOpts.ScreenWidth / (float)EngineOpts.ScreenHeight, 0.1f, 100.0f);
-
 	GLuint MatrixID = glGetUniformLocation(gProgramID, "MVP");
 
 	// Camera matrix
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(EngineOpts.CamX, EngineOpts.CamY, EngineOpts.CamZ), // Camera is at (4,3,3), in World Space
+		glm::vec3(gViewport.Position.x, gViewport.Position.y, gViewport.Position.z),
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
@@ -165,7 +169,7 @@ void DrawFigure(glm::vec3 pos, GLuint vertexBuff, GLsizei count)
 	glm::mat4 Model = glm::translate(glm::mat4(1.0f), pos);
 
 	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP = Projection * View * Model; // Remember, matrix multiplication is the other way around
+	glm::mat4 MVP = gViewport.GetMatrix() * View * Model; // Remember, matrix multiplication is the other way around
 
 	// Send our transformation to the currently bound shader, 
 	// in the "MVP" uniform
@@ -198,23 +202,21 @@ void DrawFigure(glm::vec3 pos, GLuint vertexBuff, GLsizei count)
 	glDrawArrays(GL_TRIANGLES, 0, count);
 }
 
-void render()
+bool RenderOGL::Process()
 {
 	//Clear color buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(gProgramID);
+	if (EngineOpts.RenderDemo)
+	{
+		glUseProgram(gProgramID);
 
-	DrawFigure(glm::vec3(0, 0, 0), cubeVertexBuff, 12 * 3);
-	DrawFigure(glm::vec3(3, 3, 2), triVertexBuff, 3 * 3);
+		DrawFigure(glm::vec3(0, 0, 0), cubeVertexBuff, 12 * 3);
+		DrawFigure(glm::vec3(3, 3, 2), triVertexBuff, 3 * 3);
 
-	glDisableVertexAttribArray(0);
-}
-
-bool RenderOGL::Process()
-{
-	render();
-
+		glDisableVertexAttribArray(0);
+	}
+	
 	return true;
 }
 

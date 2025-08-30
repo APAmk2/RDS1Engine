@@ -7,6 +7,7 @@ cmake_minimum_required (VERSION 3.12)
 include_directories("${PROJECT_SOURCE_DIR}/3RDPARTY/GLEW/include" 
 					"${PROJECT_SOURCE_DIR}/3RDPARTY/GLM" 
 					"${PROJECT_SOURCE_DIR}/3RDPARTY/IMGUI" 
+					"${PROJECT_SOURCE_DIR}/3RDPARTY/TOML"
 					"${PROJECT_SOURCE_DIR}/3RDPARTY/ASIO")
 find_package(OpenGL)
 

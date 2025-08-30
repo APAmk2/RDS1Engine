@@ -10,6 +10,11 @@
 
 #include "Client.h"
 #include "OGL/RenderOGL.h"
+#include "RNDRCOMN/Viewport.h"
+
+#define TOML_EXCEPTIONS 0
+#include "toml.hpp"
+using namespace std::string_view_literals;
 
 constexpr int OPENGL_MAJOR = 3;
 constexpr int OPENGL_MINOR = 3;
@@ -75,9 +80,30 @@ void DestroySDL()
 	SDL_StopTextInput(gWindow);
 }
 
+void LoadConfig()
+{
+	toml::parse_result result = toml::parse_file("config.toml");
+	if (!result)
+	{
+		LogMngr->WriteLog("Failed to load 'config.toml'!", LOG_WARNING);
+		return;
+	}
+	
+	toml::table config = result.table();
+
+	EngineOpts.ScreenWidth = config["Video"]["ScreenWidth"].value_or(640);
+	EngineOpts.ScreenHeight = config["Video"]["ScreenHeight"].value_or(480);
+
+	EngineOpts.NetAddr = config["Net"]["ServerAddress"].value_or("localhost"sv);
+	EngineOpts.NetPort = config["Net"]["ServerPort"].value_or("27015"sv);
+
+	EngineOpts.RenderDemo = config["Misc"]["RenderDemo"].value_or(true);
+}
+
 RDS1Client::RDS1Client()
 {
 	LogMngr->WriteLog("Created client instance.");
+	LoadConfig();
 }
 RDS1Client::~RDS1Client()
 {
@@ -147,32 +173,32 @@ void RDS1Client::HandleInput(SDL_Event* event)
 
 		if (event->key.key == SDLK_PAGEUP)
 		{
-			EngineOpts.CamY += 0.1f;
+			gViewport.Position.y += 0.1f;
 		}
 
 		if (event->key.key == SDLK_PAGEDOWN)
 		{
-			EngineOpts.CamY -= 0.1f;
+			gViewport.Position.y -= 0.1f;
 		}
 
 		if (event->key.key == SDLK_UP)
 		{
-			EngineOpts.CamZ -= 0.1f;
+			gViewport.Position.z -= 0.1f;
 		}
 
 		if (event->key.key == SDLK_DOWN)
 		{
-			EngineOpts.CamZ += 0.1f;
+			gViewport.Position.z += 0.1f;
 		}
 
 		if (event->key.key == SDLK_LEFT)
 		{
-			EngineOpts.CamX -= 0.1f;
+			gViewport.Position.x -= 0.1f;
 		}
 
 		if (event->key.key == SDLK_RIGHT)
 		{
-			EngineOpts.CamX += 0.1f;
+			gViewport.Position.x += 0.1f;
 		}
 	}
 }

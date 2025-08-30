@@ -29,3 +29,21 @@ struct Vertex
 {
 	float points[3];
 };
+
+template<typename T> struct Vector3
+{
+	T x;
+	T y;
+	T z;
+};
+
+typedef Vector3<i32> Vector3i;
+typedef Vector3<float> Vector3f;
+
+struct Rect
+{
+	u32 x = 0; // X coord
+	u32 y = 0; // Y coord
+	u32 w = 0; // Width
+	u32 h = 0; // Height
+};
